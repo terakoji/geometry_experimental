@@ -32,6 +32,8 @@
 #include <tf2/convert.h>
 #include <Eigen/Geometry>
 #include <geometry_msgs/PointStamped.h>
+#include <geometry_msgs/PoseStamped.h>
+
 
 namespace tf2
 {
@@ -82,6 +84,30 @@ void doTransform(const tf2::Stamped<Eigen::Affine3d>& t_in,
   t_out = tf2::Stamped<Eigen::Affine3d>(transformToEigen(transform) * t_in, transform.header.stamp, transform.header.frame_id);
 }
 
+//convert to pose message
+geometry_msgs::PoseStamped toMsg(const tf2::Stamped<Eigen::Affine3d>& in)
+{
+  geometry_msgs::PoseStamped msg;
+  msg.header.stamp = in.stamp_;
+  msg.header.frame_id = in.frame_id_;
+  msg.pose.position.x = in.translation().x();
+  msg.pose.position.y = in.translation().y();
+  msg.pose.position.z = in.translation().z();
+  msg.pose.orientation.x = Eigen::Quaterniond(in.rotation()).x();
+  msg.pose.orientation.y = Eigen::Quaterniond(in.rotation()).y();
+  msg.pose.orientation.z = Eigen::Quaterniond(in.rotation()).z();
+  msg.pose.orientation.w = Eigen::Quaterniond(in.rotation()).w();
+  return msg;
+}
+
+void fromMsg(const geometry_msgs::PoseStamped& msg, tf2::Stamped<Eigen::Affine3d>& out)
+{
+  out.stamp_ = msg.header.stamp;
+  out.frame_id_ = msg.header.frame_id;
+  out.setData(Eigen::Affine3d(Eigen::Translation3d(msg.pose.position.x, msg.pose.position.y, msg.pose.position.z)
+			       * Eigen::Quaterniond(msg.pose.orientation.w, 
+						    msg.pose.orientation.x, msg.pose.orientation.y, msg.pose.orientation.z)));
+}
 
 } // namespace
 

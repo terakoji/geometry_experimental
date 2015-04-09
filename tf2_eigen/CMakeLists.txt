@@ -8,21 +8,17 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
 )
 
-pkg_check_modules(bullet REQUIRED bullet)
-
 find_package(catkin REQUIRED COMPONENTS geometry_msgs tf2)
 
 find_package(Eigen REQUIRED)
 include_directories(${EIGEN_INCLUDE_DIRS})
 add_definitions(${EIGEN_DEFINITIONS})
 
-include_directories(include ${bullet_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
-
 catkin_package(
   INCLUDE_DIRS include ${catkin_INCLUDE_DIRS}
   DEPENDS eigen)
 
-install(DIRECTORY include/
+install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
 
